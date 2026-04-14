@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "Netflix Subtitle Extractor",
+  "description": "Extract and download subtitles from Netflix while watching movies and series",
+  "version": "1.0.0",
+  "icons": {
+    "16": "public/icons/icon16.png",
+    "32": "public/icons/icon32.png",
+    "48": "public/icons/icon48.png",
+    "128": "public/icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "public/icons/icon16.png",
+      "32": "public/icons/icon32.png",
+      "48": "public/icons/icon48.png",
+      "128": "public/icons/icon128.png"
+    },
+    "default_title": "Netflix Subtitle Extractor"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://*.netflix.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.ts-loader-BCiGPTO0.js"
+      ],
+      "matches": [
+        "https://*.netflix.com/watch/*"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://*.netflix.com/*"
+      ],
+      "resources": [
+        "public/*",
+        "assets/formatters-DC878O5G.js",
+        "assets/index.ts-X6pSvN5m.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
+}

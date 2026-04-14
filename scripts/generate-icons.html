@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Generate Icons</title>
+  </head>
+  <body>
+    <h1>Netflix Subtitle Extractor - Icon Generator</h1>
+    <p>Clique em cada botão para baixar o ícone correspondente:</p>
+
+    <div id="icons"></div>
+
+    <script>
+      const sizes = [16, 32, 48, 128];
+
+      function createSvg(size) {
+        const strokeWidth = Math.max(1, size * 0.08);
+        const padding = size * 0.15;
+
+        return `
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#E50914"/>
+              <stop offset="100%" style="stop-color:#B20710"/>
+            </linearGradient>
+          </defs>
+          
+          <rect width="${size}" height="${size}" rx="${size * 0.15}" fill="url(#bg)"/>
+          
+          <rect 
+            x="${padding}" 
+            y="${padding}" 
+            width="${size - padding * 2}" 
+            height="${size - padding * 2}" 
+            rx="${size * 0.08}"
+            fill="none" 
+            stroke="white" 
+            stroke-width="${strokeWidth}"
+          />
+          
+          <line 
+            x1="${padding * 1.5}" 
+            y1="${size * 0.45}" 
+            x2="${size - padding * 1.5}" 
+            y2="${size * 0.45}" 
+            stroke="white" 
+            stroke-width="${strokeWidth}"
+            stroke-linecap="round"
+          />
+          <line 
+            x1="${padding * 1.5}" 
+            y1="${size * 0.6}" 
+            x2="${size * 0.7}" 
+            y2="${size * 0.6}" 
+            stroke="white" 
+            stroke-width="${strokeWidth}"
+            stroke-linecap="round"
+          />
+        </svg>
+      `;
+      }
+
+      function svgToPng(svgString, size, callback) {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+
+        const img = new Image();
+        const svgBlob = new Blob([svgString], {
+          type: "image/svg+xml;charset=utf-8",
+        });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = function () {
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          callback(canvas.toDataURL("image/png"));
+        };
+
+        img.src = url;
+      }
+
+      function downloadPng(dataUrl, filename) {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = filename;
+        a.click();
+      }
+
+      const container = document.getElementById("icons");
+
+      sizes.forEach((size) => {
+        const div = document.createElement("div");
+        div.style.margin = "20px";
+        div.style.display = "inline-block";
+        div.style.textAlign = "center";
+
+        const svg = createSvg(size);
+        div.innerHTML = svg;
+
+        const btn = document.createElement("button");
+        btn.textContent = `Download icon${size}.png`;
+        btn.style.display = "block";
+        btn.style.marginTop = "10px";
+        btn.onclick = () => {
+          svgToPng(svg, size, (dataUrl) => {
+            downloadPng(dataUrl, `icon${size}.png`);
+          });
+        };
+
+        div.appendChild(btn);
+        container.appendChild(div);
+      });
+
+      // Auto download all
+      const downloadAllBtn = document.createElement("button");
+      downloadAllBtn.textContent = "Download All Icons";
+      downloadAllBtn.style.margin = "20px";
+      downloadAllBtn.style.padding = "10px 20px";
+      downloadAllBtn.onclick = () => {
+        sizes.forEach((size, i) => {
+          setTimeout(() => {
+            const svg = createSvg(size);
+            svgToPng(svg, size, (dataUrl) => {
+              downloadPng(dataUrl, `icon${size}.png`);
+            });
+          }, i * 500);
+        });
+      };
+      container.appendChild(downloadAllBtn);
+    </script>
+  </body>
+</html>
